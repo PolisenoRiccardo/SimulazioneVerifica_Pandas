@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Risultato</title>
+</head>
+<body>
+    <p>Inserisci la categoria:</p>
+    <form action="/" method="get">
+        <select name="categoria">
+        {% for categoria in categorie %}
+        <option value={{categoria}}>{{categoria}}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Conferma">
+    </form>
+</body>
+</html>
