@@ -21,7 +21,13 @@ def risultatocategoria():
 
 @app.route('/prezzo', methods=['GET'])
 def prezzo():
-    return render_template('input.html')
+    return render_template('input2.html')
+
+@app.route('/risultatoprezzo', methods=['GET'])
+def risultatoprezzo():
+    minimo, massimo = request.args.get('minimo'), request.args.get('massimo')
+    table = df[(df['list_price'] > float(minimo)) & (df['list_price'] < float(massimo))].sort_values(by='list_price', ascending=False)
+    return render_template('risultato.html', table = table.to_html())
 
 @app.route('/nome', methods=['GET'])
 def nome():
