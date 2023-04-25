@@ -9,10 +9,15 @@ def form():
     return render_template('home.html')
 
 @app.route('/categoria', methods=['GET'])
-def categoria():
+def categoria():  
+    categorie = df['category_id'].tolist() 
+    categorie = list(set(categorie))
+    return render_template('input.html', categorie = categorie)
+
+@app.route('/risultatocategoria', methods=['GET'])
+def risultatocategoria():
     categoria = request.args.get('categoria')
-    table = df[df['category_id'] == categoria].sort_values(by='product_name').to_html()  
-    return render_template('input.html', table = table, categorie = df['category_id'].tolist())
+    return render_template('risultato.html', table = df[df['category_id'] == int(categoria)].sort_values(by='product_name').to_html()  )
 
 @app.route('/prezzo', methods=['GET'])
 def prezzo():
