@@ -1,3 +1,7 @@
+import io
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
 from flask import Flask, render_template, request, Response
 app = Flask(__name__)
 
@@ -30,17 +34,34 @@ def risultatoprezzo():
     return render_template('risultato.html', table = table.to_html())
 
 @app.route('/nome', methods=['GET'])
-def nome():
-    return render_template('input.html')
+def nome():  
+    return render_template('input3.html')
+
+@app.route('/risultatonome', methods=['GET'])
+def risultatonome():
+    prodotto = request.args.get('nome')
+    table = df[df['product_name'].str.contains(prodotto)].sort_values(by='product_name')
+    return render_template('risultato.html', table = table.to_html())
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+categorie = df.groupby('category_id').count().sort_values(by='model_year', ascending = False)[['product_id']]
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 @app.route('/numero', methods=['GET'])
 def numero():
-    return render_template('input.html')
+    return render_template('risultato.html',  table = categorie.to_html() )
 
 @app.route('/grafico', methods=['GET'])
 def grafico():
-    return render_template('input.html')
-
+    
+    dati = categorie['product_id']
+    labels = categorie.index.map(str)
+    fig, ax = plt.subplots()
+    plt.bar(labels, dati)
+    plt.title('Numero di prodotti per categoria')
+    output = io.BytesIO()
+    FigureCanvas(fig).print_png(output)
+    return Response(output.getvalue(), mimetype='image/png')
 
 
 if __name__ == '__main__':
